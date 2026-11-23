@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTO Hayvan Dostları Topluluğu</title>
+    <link rel="icon" type="image/svg+xml" href="logo-icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('kto_theme') === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="style.css?v=20261114v14">
+</head>
+<body id="top">
+    <!-- Üst Kayan Bilgi Şeridi (Gece Gökyüzü Temalı Kesintisiz Döngü) -->
+    <div class="top-ticker">
+        <div class="ticker-track">
+            <div class="ticker-group">
+                <span>✦ KTO KARATAY KAMPÜS KEDİ ARŞİVİ</span>
+                <span>★ İSİM OYLAMASINA KATILIN</span>
+                <span>✚ GÜNCEL AŞI & SAĞLIK TAKVİMİ</span>
+                <span>→ WHATSAPP TOPLULUĞUMUZA KATILIN</span>
+            </div>
+            <div class="ticker-group" aria-hidden="true">
+                <span>✦ KTO KARATAY KAMPÜS KEDİ ARŞİVİ</span>
+                <span>★ İSİM OYLAMASINA KATILIN</span>
+                <span>✚ GÜNCEL AŞI & SAĞLIK TAKVİMİ</span>
+                <span>→ WHATSAPP TOPLULUĞUMUZA KATILIN</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigasyon Barı -->
+    <header class="navbar">
+        <div class="navbar-top-row">
+            <a href="#hero" class="nav-brand" style="text-decoration:none;">
+                <div class="brand-logo-wrapper" title="KTO Karatay Üniversitesi Hayvan Dostları Topluluğu">
+                    <img src="logo-icon.svg" alt="KTO Hayvan Dostları Topluluğu Vektör Logosu" class="club-vector-logo-icon">
+                </div>
+                <div class="brand-text">
+                    <h1>HAYVAN DOSTLARI TOPLULUĞU</h1>
+                    <span class="brand-badge">KTO KARATAY ÜNİVERSİTESİ</span>
+                </div>
+            </a>
+            <div class="navbar-actions">
+                <button type="button" id="navThemeToggle" class="mobile-theme-btn" data-theme-toggle aria-label="Karanlık veya Aydınlık Moda Geç" aria-pressed="false" title="Karanlık / Aydınlık Mod">
+                    <span class="theme-glyph">◐</span>
+                </button>
+            </div>
+        </div>
+        <nav class="nav-links" id="navLinks">
+            <a href="#hero" class="nav-btn active">Ana Sayfa</a>
+            <a href="#cat-archive" class="nav-btn">Kedi Arşivi</a>
+            <a href="#name-polls" class="nav-btn">İsim Oylaması</a>
+            <a href="#vaccine-tracker" class="nav-btn">Aşı Takvimi</a>
+            <a href="#join-club" class="nav-btn nav-cta">Topluluğa Katıl →</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <!-- HERO BÖLÜMÜ (Masalsı Gece & Ay Işığı Teması) -->
+        <section id="hero" class="hero-section">
+            <div class="panel-header">
+                <span class="panel-ornament">✦ ✦ ✦</span>
+                <span class="panel-title">KAMPÜS PATİLİ DOSTLAR ARŞİVİ</span>
+                <span class="panel-ornament">✦ ✦ ✦</span>
+            </div>
+            <div class="hero-body">
+                <div class="hero-text">
+                    <h2>Kampüsün <span class="highlight-amber">Patili Dostları</span> Bir Arada!</h2>
+                    <div class="mascot-frame">
+                        <img src="cat-mascot.jpg" alt="KTO Hayvan Dostları Gece Nöbetçisi İllüstrasyonu" class="mascot-thumb">
+                        <p>
+                        Kampüsümüzün sevimli sakinlerini arşivliyor, yeni misafirlere isim seçiyor ve aşılarını düzenli takip ediyoruz.
+                        </p>
+                    </div>
+
+                    <div class="hero-buttons">
+                        <a href="#page-footer" class="art-btn btn-amber">Yönetim Paneli ↓</a>
+                        <button type="button" id="heroThemeToggle" class="art-btn btn-mode" data-theme-toggle aria-label="Karanlık veya Aydınlık Moda Geç" aria-pressed="false">
+                            <span class="theme-glyph">◐</span>
+                            <span class="theme-label">Karanlık Mod</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <!-- Algoritma Tarafından Her Gün Otomatik Seçilen Günün Kedisi Kartı -->
+                    <div class="showcase-card" id="catOfTheDayCard">
+                        <div class="showcase-header">
+                            <span class="showcase-tag">✦ GÜNÜN KEDİSİ YÜKLENİYOR</span>
+                            <span class="hp-stars">★ ★ ★</span>
+                        </div>
+                        <div class="showcase-info">
+                            <p style="margin-bottom:0;">Günün kampüs kedisi seçiliyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İstatistik Kutuları -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-glyph">✦</div>
+                    <div>
+                        <h4 id="statTotalCats">0</h4>
+                        <p>Kayıtlı Kedi</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-glyph">◈</div>
+                    <div>
+                        <h4 id="statUnnamedCats">0</h4>
+                        <p>İsim Oylamasında</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-glyph">✚</div>
+                    <div>
+                        <h4 id="statCompletedVaccines">0</h4>
+                        <p>Tamamlanan Aşı</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-glyph">★</div>
+                    <div>
+                        <h4>440+</h4>
+                        <p>Gönüllü Üye</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BÖLÜM 1: KAMPÜS KEDİ ARŞİVİ -->
+        <section id="cat-archive" class="section-block">
+            <div class="section-header">
+                <div>
+                    <span class="section-subtitle">✦ PATİLİ DOSTLARIMIZ</span>
+                    <h2>Kedi Arşivi</h2>
+                </div>
+                <div class="archive-controls">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">Tümü</button>
+                        <button class="filter-btn" data-filter="named">İsimliler</button>
+                        <button class="filter-btn" data-filter="unnamed">Oylamadakiler</button>
+                        <button class="filter-btn" data-filter="vaccine-due">Aşısı Yaklaşan</button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="catSearchInput" placeholder="Kedi adı veya özellik ara...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kedi Kartları Grid -->
+            <div id="catArchiveGrid" class="cat-grid">
+                <!-- JavaScript ile dinamik doldurulacak -->
+            </div>
+        </section>
+
+        <!-- BÖLÜM 2: İSİMSİZ KEDİLER İÇİN OYLAMA PANELİ -->
+        <section id="name-polls" class="section-block art-panel">
+            <div class="panel-header amber-bar">
+                <span class="panel-title">◈ İSİM OYLAMASI · Yeni Misafirlerimize İsim Seçiyoruz</span>
+                <span class="panel-ornament">★ ★ ★</span>
+            </div>
+            <div class="section-inner">
+                <div class="poll-intro">
+                    <p>
+                        Aramıza yeni katılan patili dostlarımıza isim vermek için oyunuzu kullanın. Her kedi için 1 oy hakkı bulunur.
+                    </p>
+                </div>
+
+                <div id="pollsContainer" class="polls-grid">
+                    <!-- JavaScript ile dinamik doldurulacak -->
+                </div>
+            </div>
+        </section>
+
+        <!-- BÖLÜM 3: AŞI VE SAĞLIK TAKVİMİ PANELİ (Salt Okunur) -->
+        <section id="vaccine-tracker" class="section-block art-panel">
+            <div class="panel-header teal-bar">
+                <span class="panel-title">✚ AŞI & SAĞLIK TAKVİMİ</span>
+                <span class="panel-ornament">✦ ✦ ✦</span>
+            </div>
+            <div class="section-inner">
+                <div class="vaccine-toolbar">
+                    <div class="vaccine-legend">
+                        <span class="badge status-done">✓ Tamamlandı</span>
+                        <span class="badge status-upcoming">· Planlandı</span>
+                        <span class="badge status-urgent">! Günü Geldi</span>
+                    </div>
+                    <div class="vaccine-filter-group">
+                        <select id="vaccineStatusFilter" class="art-select">
+                            <option value="all">Tüm Aşılar</option>
+                            <option value="urgent">! Acil / Günü Gelenler</option>
+                            <option value="upcoming">· Yaklaşan Aşılar</option>
+                            <option value="done">✓ Tamamlananlar</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="art-table">
+                        <thead>
+                            <tr>
+                                <th>Kedi</th>
+                                <th>Aşı / Tedavi</th>
+                                <th>Tarih</th>
+                                <th>Uygulayan</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vaccineTableBody">
+                            <!-- JavaScript ile dinamik doldurulacak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- BÖLÜM 4: TOPLULUK ÜYELİĞİ & WHATSAPP KAREKOD PANELİ -->
+        <section id="join-club" class="section-block">
+            <div class="join-grid">
+                <!-- Sol: Topluluk Tanıtım & Vektör Logo Vitrin Alanı -->
+                <div class="join-info-card">
+                    <div class="join-header-with-logo">
+                        <div>
+                            <div class="tag-amber">✦ ARAMIZA KATILIN</div>
+                            <h2>Topluluğumuza Katılın</h2>
+                        </div>
+                        <div class="club-full-logo-box" title="Resmi Vektörel Topluluk Logomuz">
+                            <img src="logo-full.svg" alt="KTO Karatay Üniversitesi Hayvan Dostları Topluluğu Resmi Logosu">
+                        </div>
+                    </div>
+                    <p>
+                        Besleme, tedavi, bakım ve yuva bulma süreçlerinde bize katılmak için WhatsApp grubumuza bekliyoruz.
+                    </p>
+
+                    <div class="club-perks">
+                        <div class="perk-item">
+                            <div class="perk-glyph">◷</div>
+                            <div>
+                                <h4>Besleme Takibi</h4>
+                                <p>Mama ve su kaplarını düzenli kontrol ediyoruz.</p>
+                            </div>
+                        </div>
+                        <div class="perk-item">
+                            <div class="perk-glyph">✚</div>
+                            <div>
+                                <h4>Sağlık & Tedavi</h4>
+                                <p>Tedaviye muhtaç canları hızla kliniğe ulaştırıyoruz.</p>
+                            </div>
+                        </div>
+                        <div class="perk-item">
+                            <div class="perk-glyph">❖</div>
+                            <div>
+                                <h4>Gönüllü Ağı</h4>
+                                <p>Etkinlikler ve dayanışma için birlikte hareket ediyoruz.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sağ: WhatsApp QR ve Link Kutusu -->
+                <div class="whatsapp-qr-card">
+                    <div class="panel-header">
+                        <span class="panel-title">WHATSAPP İLETİŞİM GRUBU</span>
+                        <span class="panel-ornament">✦</span>
+                    </div>
+                    <div class="qr-card-body">
+                        <div class="qr-badge">KAREKODU OKUT VEYA LİNKE TIKLA</div>
+                        <div class="qr-frame">
+                            <img id="whatsappQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://chat.whatsapp.com/KTOHayvanDostlariKulubu&color=161424&bgcolor=ffffff" alt="KTO Hayvan Dostları WhatsApp QR Kodu" />
+                        </div>
+                        <p class="qr-caption">
+                            Kameranızla karekodu okutarak veya butona dokunarak doğrudan WhatsApp grubumuza katılabilirsiniz.
+                        </p>
+                        <div class="qr-actions">
+                            <a id="whatsappDirectLink" href="https://chat.whatsapp.com/KTOHayvanDostlariKulubu" target="_blank" rel="noopener noreferrer" class="art-btn btn-whatsapp">
+                                WhatsApp Grubuna Katıl →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="page-footer" class="footer">
+        <div class="footer-content">
+            <a href="#top" class="footer-left footer-top-link" id="backToTopLink" title="Sayfanın en başına dön ↑">
+                <img src="logo-icon.svg" alt="KTO Hayvan Dostları" class="footer-logo-img">
+                <div>
+                    <h3>KTO Hayvan Dostları Topluluğu <span class="back-top-arrow">↑</span></h3>
+                    <p>KTO Karatay Üniversitesi</p>
+                </div>
+            </a>
+            <div class="footer-right">
+                <button type="button" class="art-btn btn-light btn-sm" data-open-kvkk>KVKK Aydınlatma Metni</button>
+                <a href="admin.html" class="art-btn btn-amber btn-sm">Yönetim Paneli ⚙</a>
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <div class="footer-credit-group">
+                <span>© 2026 · Konya</span>
+                <span class="footer-dev-badge"><span class="dev-star">✦</span> Developed by İrem Dudu Köse</span>
+            </div>
+            <span class="footer-security-note">✦ Firebase Güvenlik Kuralları &amp; 6698 Sayılı KVKK İlkeleriyle Korunur</span>
+        </div>
+    </footer>
+
+    <!-- KVKK Aydınlatma & Gizlilik Modalı -->
+    <div id="kvkkModal" class="kvkk-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="kvkkModalTitle">
+        <div class="kvkk-modal-card">
+            <div class="panel-header">
+                <span class="panel-title" id="kvkkModalTitle">✦ KİŞİSEL VERİLERİN KORUNMASI (KVKK) AYDINLATMA METNİ</span>
+                <button type="button" class="art-btn btn-light btn-sm" data-close-kvkk aria-label="Kapat">✕</button>
+            </div>
+            <div class="kvkk-modal-body">
+                <div>
+                    <h4>1. Veri Sorumlusu</h4>
+                    <p>Bu bilgilendirme metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında <strong>KTO Karatay Üniversitesi Hayvan Dostları Topluluğu</strong> tarafından işletilen kampüs kedi arşivi platformu için hazırlanmıştır.</p>
+                </div>
+                <div>
+                    <h4>2. Ana Sayfa Ziyaretçileri İçin Gizlilik</h4>
+                    <p>Kampüs kedi arşivini incelemek ve isim oylamalarına katılmak için ad, soyad veya e-posta gibi hiçbir kimlik bilgisi istenmez. İsim oylamasında mükerrer oyu önlemek amacıyla yalnızca anonim Firebase oturum kimliği ve tarayıcınızda oy/tema tercihi saklanır.</p>
+                </div>
+                <div>
+                    <h4>3. Yönetim Ekibi Başvuru Verileri</h4>
+                    <p>Yönetim paneline başvuran yetkililerden alınan <strong>Ad Soyad</strong>, <strong>E-posta Adresi</strong> ve <strong>Görev Notu</strong> yalnızca yetkilendirme ve topluluk koordinasyonu amacıyla işlenir; şifreli Google Firebase (Authentication &amp; Cloud Firestore) altyapısında saklanır ve yalnızca başvuru sahibi ile yetkili onay sorumlularınca görüntülenir.</p>
+                </div>
+                <div>
+                    <h4>4. KVKK Madde 11 Kapsamındaki Haklarınız</h4>
+                    <p>Onay bekleyen başvurunuzu yönetim giriş ekranından silebilir, kayıtlı verilerinizin güncellenmesi veya tamamen silinmesi talepleriniz için topluluk yönetimine veya yetkili kulüp temsilcilerine ulaşabilirsiniz.</p>
+                </div>
+            </div>
+            <div class="kvkk-modal-footer">
+                <button type="button" class="art-btn btn-gold btn-sm" data-close-kvkk>Anladım, Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kedi Fotoğraf Büyütme Modalı (Lightbox) -->
+    <div id="photoLightboxModal" class="photo-lightbox-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="photoLightboxTitle">
+        <div class="photo-lightbox-card">
+            <div class="panel-header">
+                <span class="panel-title" id="photoLightboxTitle">✦ KAMPÜS DOSTUMUZ</span>
+                <button type="button" class="art-btn btn-light btn-sm" data-close-lightbox aria-label="Fotoğrafı Kapat">✕</button>
+            </div>
+            <div class="photo-lightbox-stage">
+                <button type="button" class="art-btn btn-light btn-sm photo-lightbox-nav prev hidden" id="photoLightboxPrevBtn" aria-label="Önceki Fotoğraf">‹</button>
+                <img id="photoLightboxImg" src="" alt="">
+                <button type="button" class="art-btn btn-light btn-sm photo-lightbox-nav next hidden" id="photoLightboxNextBtn" aria-label="Sonraki Fotoğraf">›</button>
+                <span id="photoLightboxCounter" class="photo-lightbox-counter hidden">1 / 1</span>
+            </div>
+            <div id="photoLightboxThumbs" class="photo-lightbox-thumbs hidden"></div>
+            <div class="photo-lightbox-footer">
+                <div class="photo-lightbox-meta">
+                    <strong id="photoLightboxName">Kampüs Kedisi</strong>
+                    <span id="photoLightboxBio"></span>
+                </div>
+                <button type="button" class="art-btn btn-gold btn-sm" data-close-lightbox>Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobil Alt Hızlı Navigasyon Çubuğu (Tek Elle Kolay Erişim) -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Hızlı Mobil Menü">
+        <a href="#hero" class="mobile-dock-btn active" data-target="hero">
+            <span class="dock-glyph">✦</span>
+            <span class="dock-label">Ana</span>
+        </a>
+        <a href="#cat-archive" class="mobile-dock-btn" data-target="cat-archive">
+            <span class="dock-glyph">◈</span>
+            <span class="dock-label">Arşiv</span>
+        </a>
+        <a href="#name-polls" class="mobile-dock-btn" data-target="name-polls">
+            <span class="dock-glyph">★</span>
+            <span class="dock-label">Oylama</span>
+        </a>
+        <a href="#vaccine-tracker" class="mobile-dock-btn" data-target="vaccine-tracker">
+            <span class="dock-glyph">✚</span>
+            <span class="dock-label">Aşı</span>
+        </a>
+        <a href="#join-club" class="mobile-dock-btn dock-cta" data-target="join-club">
+            <span class="dock-glyph">→</span>
+            <span class="dock-label">Katıl</span>
+        </a>
+    </nav>
+
+    <!-- Bildirim Toast -->
+    <div id="pixelToast" class="pixel-toast hidden"></div>
+
+    <script>
+        // Navigasyon, Mobil Menü Aç/Kapat ve Scroll-Spy (Hem canlıda hem yerel önizlemede eksiksiz çalışır)
+        (function () {
+            function initNavAndSpy() {
+                var navbar = document.querySelector('.navbar');
+                var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                var navLinks = document.getElementById('navLinks');
+                var desktopNavBtns = document.querySelectorAll('#navLinks .nav-btn[href^="#"]');
+                var mobileDockBtns = document.querySelectorAll('#mobileBottomNav .mobile-dock-btn[href^="#"]');
+                var sectionIds = ['hero', 'cat-archive', 'name-polls', 'vaccine-tracker', 'join-club'];
+
+                function closeMobileMenu() {
+                    if (!navLinks || !mobileMenuToggle) return;
+                    navLinks.classList.remove('open');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    var icon = mobileMenuToggle.querySelector('.menu-icon');
+                    if (icon) icon.textContent = '≡';
+                }
+
+                if (mobileMenuToggle && navLinks && !mobileMenuToggle.dataset.bound) {
+                    mobileMenuToggle.dataset.bound = '1';
+                    mobileMenuToggle.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        var isOpen = navLinks.classList.toggle('open');
+                        mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
+                        var icon = mobileMenuToggle.querySelector('.menu-icon');
+                        if (icon) icon.textContent = isOpen ? '✕' : '≡';
+                    });
+
+                    document.addEventListener('click', function (e) {
+                        if (navLinks.classList.contains('open') && navbar && !navbar.contains(e.target)) {
+                            closeMobileMenu();
+                        }
+                    });
+                }
+
+                function setActiveNavById(activeId) {
+                    var targetHref = '#' + activeId;
+                    desktopNavBtns.forEach(function (btn) {
+                        btn.classList.toggle('active', btn.getAttribute('href') === targetHref);
+                    });
+                    mobileDockBtns.forEach(function (btn) {
+                        btn.classList.toggle('active', btn.getAttribute('href') === targetHref);
+                    });
+                }
+
+                function handleNavClick(btn) {
+                    btn.addEventListener('click', function () {
+                        var href = btn.getAttribute('href') || '';
+                        if (href.startsWith('#') && href.length > 1) {
+                            setActiveNavById(href.slice(1));
+                        }
+                        closeMobileMenu();
+                    });
+                }
+
+                desktopNavBtns.forEach(handleNavClick);
+                mobileDockBtns.forEach(handleNavClick);
+
+                var scrollTicking = false;
+                function updateScrollSpy() {
+                    scrollTicking = false;
+                    var scrollY = window.scrollY || window.pageYOffset;
+
+                    if (navbar) {
+                        navbar.classList.toggle('scrolled', scrollY > 30);
+                    }
+
+                    // En alta ulaşıldıysa son bölümü yak
+                    if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 36) {
+                        setActiveNavById(sectionIds[sectionIds.length - 1]);
+                        return;
+                    }
+
+                    var triggerOffset = Math.max(170, Math.round(window.innerHeight * 0.28));
+                    var currentId = sectionIds[0];
+
+                    for (var i = 0; i < sectionIds.length; i++) {
+                        var el = document.getElementById(sectionIds[i]);
+                        if (el && el.getBoundingClientRect().top <= triggerOffset) {
+                            currentId = sectionIds[i];
+                        }
+                    }
+
+                    setActiveNavById(currentId);
+                }
+
+                window.addEventListener('scroll', function () {
+                    if (!scrollTicking) {
+                        window.requestAnimationFrame(updateScrollSpy);
+                        scrollTicking = true;
+                    }
+                }, { passive: true });
+
+                updateScrollSpy();
+
+                // Tema (Aydınlık / Karanlık Mod) Kontrolü
+                function syncThemeUI(theme) {
+                    var isDark = theme === 'dark';
+                    if (isDark) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                    document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+                        btn.setAttribute('aria-pressed', String(isDark));
+                        var glyph = btn.querySelector('.theme-glyph');
+                        var label = btn.querySelector('.theme-label');
+                        if (glyph) glyph.textContent = isDark ? '✦' : '◐';
+                        if (label) label.textContent = isDark ? 'Aydınlık Mod' : 'Karanlık Mod';
+                    });
+                }
+
+                var initialTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+                syncThemeUI(initialTheme);
+
+                document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+                    if (btn.dataset.themeBound) return;
+                    btn.dataset.themeBound = '1';
+                    btn.addEventListener('click', function () {
+                        var nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                        try {
+                            localStorage.setItem('kto_theme', nextTheme);
+                        } catch (e) {}
+                        syncThemeUI(nextTheme);
+                    });
+                });
+
+                // KVKK Aydınlatma Modalı Kontrolleri
+                var kvkkModal = document.getElementById('kvkkModal');
+                if (kvkkModal && !kvkkModal.dataset.kvkkBound) {
+                    kvkkModal.dataset.kvkkBound = '1';
+                    document.querySelectorAll('[data-open-kvkk]').forEach(function (el) {
+                        el.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            kvkkModal.classList.remove('hidden');
+                        });
+                    });
+                    document.querySelectorAll('[data-close-kvkk]').forEach(function (el) {
+                        el.addEventListener('click', function () {
+                            kvkkModal.classList.add('hidden');
+                        });
+                    });
+                    kvkkModal.addEventListener('click', function (e) {
+                        if (e.target === kvkkModal) kvkkModal.classList.add('hidden');
+                    });
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && !kvkkModal.classList.contains('hidden')) {
+                            kvkkModal.classList.add('hidden');
+                        }
+                    });
+                }
+            }
+
+            initNavAndSpy();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initNavAndSpy);
+            }
+        })();
+
+        // Yerel file:// protokolüyle açıldığında tarayıcı CORS kısıtlaması ES modüllerini engeller; kullanıcıyı bilgilendir ve temel önizlemeyi sağla
+        if (window.location.protocol === 'file:') {
+            var showFileNotice = function () {
+                var dayCard = document.getElementById('catOfTheDayCard');
+                if (dayCard) {
+                    dayCard.innerHTML =
+                        '<div class="showcase-header">' +
+                        '  <span class="showcase-tag">✦ CANLI SİTE ÖNİZLEME NOTU</span>' +
+                        '  <span class="hp-stars">★ ★ ★</span>' +
+                        '</div>' +
+                        '<div class="showcase-info">' +
+                        '  <h3>Yerel Dosya Modu (file://)</h3>' +
+                        '  <p>Firebase veritabanı ve canlı arşiv yalnızca web sunucusu üzerinden çalışır. Tüm kedileri ve oylamaları görmek için canlı siteyi açın:</p>' +
+                        '  <a href="https://ktohayvandostlari.web.app" class="art-btn btn-amber btn-sm" style="width:100%;">Canlı Siteyi Aç (ktohayvandostlari.web.app) →</a>' +
+                        '</div>';
+                }
+            };
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', showFileNotice);
+            } else {
+                showFileNotice();
+            }
+        }
+    </script>
+    <script type="module" src="app.js?v=20261114v14"></script>
+</body>
+</html>

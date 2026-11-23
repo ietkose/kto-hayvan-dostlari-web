@@ -1,0 +1,488 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: cats
+    // Document ID: cat-1..cat-6 (starter seed) or auto-generated Firestore ID
+    // Fields:
+    //   - code: string (required, 1..20 chars, e.g. "#KTO-01")
+    //   - isNamed: bool (required)
+    //   - name: string (required, 1..80 chars)
+    //   - bio: string (required, 1..1000 chars)
+    //   - photo: string (required, http(s) URL <= 2048 chars OR raster data:image/*;base64 <= 400000 chars)
+    //   - photos: list<string> (optional, 1..3 items, each passes isValidCatPhoto)
+    //   - vaccineSummary: string (required, 1..200 chars)
+    //   - vaccineDue: bool (required)
+    //   - pollOptions: list<map{name: string (1..60), votes: int (0..1000000)}> (required, max 20 items; >= 2 when isNamed == false)
+    //   - createdAt: timestamp (required, == request.time on create; immutable on update except starter seed reset)
+    //   - updatedAt: timestamp (required, == request.time on create and update)
+    //
+    // Collection: vaccines
+    // Document ID: vac-1..vac-6 (starter seed) or auto-generated Firestore ID
+    // Fields:
+    //   - catId: string (required, 1..100 chars, immutable on update, must reference existing/batched cat on create)
+    //   - type: string (required, 1..100 chars)
+    //   - date: string (required, YYYY-MM-DD format)
+    //   - vet: string (required, 1..120 chars)
+    //   - status: string (required, one of ['upcoming', 'urgent', 'done'])
+    //   - createdAt: timestamp (required, == request.time on create; immutable on update except starter seed reset)
+    //
+    // Collection: settings
+    // Document ID: club (singleton)
+    // Fields:
+    //   - whatsappUrl: string (required, valid http(s) URL, <= 500 chars)
+    //   - seeded: bool (optional)
+    //   - updatedAt: timestamp (required, == request.time on create and update)
+    //
+    // Collection: pollVotes
+    // Document ID: "{catId}_{uid}" (strictly enforced 1 vote per cat per auth UID)
+    // Fields (no PII):
+    //   - catId: string (required, 1..100 chars, references existing unnamed cat)
+    //   - optionName: string (required, 1..60 chars, must match one of the target cat's pollOptions)
+    //   - createdAt: timestamp (required, == request.time)
+    //
+    // Collection: adminRequests
+    // Document ID: "{userId}" (matches Firebase Auth UID; CONTAINS PII: email)
+    // Fields:
+    //   - uid: string (required, immutable, == userId)
+    //   - email: string (required, immutable, valid email <= 254 chars, == auth token email on create)
+    //   - displayName: string (required, 1..80 chars)
+    //   - note: string (required, 0..200 chars)
+    //   - role: string (required, one of ['pending', 'admin', 'approver', 'superadmin', 'rejected'])
+    //   - createdAt: timestamp (required, immutable, == request.time on create)
+    //   - reviewedBy: string (optional, valid email <= 254 chars, == reviewer's auth token email)
+    //   - reviewedAt: timestamp (optional, == request.time when set)
+    //   - kvkkAccepted: bool (optional, immutable, must be true when present)
+    //   - kvkkAcceptedAt: timestamp (optional, immutable, == request.time on create when present)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isNonAnonAuth() {
+      return isAuthenticated() &&
+             'firebase' in request.auth.token &&
+             'sign_in_provider' in request.auth.token.firebase &&
+             request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) ||
+             request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('uid' in request.resource.data) ||
+             request.resource.data.uid == resource.data.uid;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    function validStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+             request.resource.data[field].size() >= minLen &&
+             request.resource.data[field].size() <= maxLen;
+    }
+
+    function isValidUrl(url) {
+      return url is string &&
+             (url.matches('^https://.*') || url.matches('^http://.*'));
+    }
+
+    function isValidEmail(email) {
+      return email is string &&
+             email.size() <= 254 &&
+             email.matches('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
+    }
+
+    function isValidDateOnlyString(dateStr) {
+      return dateStr is string &&
+             dateStr.size() == 10 &&
+             dateStr.matches('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$');
+    }
+
+    function isValidList(listVal, maxSize) {
+      return listVal is list && listVal.size() <= maxSize;
+    }
+
+    function isSuperAdminEmailVerified() {
+      return isNonAnonAuth() &&
+             'email' in request.auth.token &&
+             'email_verified' in request.auth.token &&
+             request.auth.token.email is string &&
+             request.auth.token.email.lower() == 'iremdudukose@gmail.com' &&
+             request.auth.token.email_verified == true;
+    }
+
+    function hasStaffRoleIn(roles) {
+      return isNonAnonAuth() &&
+             exists(/databases/$(database)/documents/adminRequests/$(request.auth.uid)) &&
+             'role' in get(/databases/$(database)/documents/adminRequests/$(request.auth.uid)).data &&
+             get(/databases/$(database)/documents/adminRequests/$(request.auth.uid)).data.role in roles;
+    }
+
+    function isSuperAdmin() {
+      return isSuperAdminEmailVerified() || hasStaffRoleIn(['superadmin']);
+    }
+
+    function isApprover() {
+      return isSuperAdmin() || hasStaffRoleIn(['approver']);
+    }
+
+    function isApprovedAdmin() {
+      return isSuperAdmin() || hasStaffRoleIn(['superadmin', 'approver', 'admin']);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    // Allow http(s) URLs OR compressed raster image data URIs (excluding SVG/HTML)
+    function isValidCatPhoto(photo) {
+      return photo is string && (
+        (isValidUrl(photo) && photo.size() <= 2048) ||
+        (
+          photo.size() >= 24 &&
+          photo.size() <= 400000 &&
+          (
+            photo[0:23] == 'data:image/jpeg;base64,' ||
+            photo[0:22] == 'data:image/jpg;base64,' ||
+            photo[0:22] == 'data:image/png;base64,' ||
+            photo[0:23] == 'data:image/webp;base64,' ||
+            photo[0:22] == 'data:image/gif;base64,' ||
+            photo[0:23] == 'data:image/avif;base64,'
+          )
+        )
+      );
+    }
+
+    function isValidCatPhotoAt(photos, idx) {
+      return photos.size() <= idx || isValidCatPhoto(photos[idx]);
+    }
+
+    function isValidCatPhotosList(photos) {
+      return photos is list &&
+             photos.size() >= 1 &&
+             photos.size() <= 3 &&
+             isValidCatPhotoAt(photos, 0) &&
+             isValidCatPhotoAt(photos, 1) &&
+             isValidCatPhotoAt(photos, 2);
+    }
+
+    function isValidPollOption(opt) {
+      return opt is map &&
+             opt.keys().hasOnly(['name', 'votes']) &&
+             opt.keys().hasAll(['name', 'votes']) &&
+             opt.name is string &&
+             opt.name.size() >= 1 &&
+             opt.name.size() <= 60 &&
+             opt.votes is int &&
+             opt.votes >= 0 &&
+             opt.votes <= 1000000;
+    }
+
+    function isValidPollOptionAt(opts, idx) {
+      return opts.size() <= idx || isValidPollOption(opts[idx]);
+    }
+
+    function isValidPollOptionsList(opts, isNamed) {
+      return isValidList(opts, 20) &&
+             (isNamed || opts.size() >= 2) &&
+             isValidPollOptionAt(opts, 0) &&
+             isValidPollOptionAt(opts, 1) &&
+             isValidPollOptionAt(opts, 2) &&
+             isValidPollOptionAt(opts, 3) &&
+             isValidPollOptionAt(opts, 4) &&
+             isValidPollOptionAt(opts, 5) &&
+             isValidPollOptionAt(opts, 6) &&
+             isValidPollOptionAt(opts, 7) &&
+             isValidPollOptionAt(opts, 8) &&
+             isValidPollOptionAt(opts, 9) &&
+             isValidPollOptionAt(opts, 10) &&
+             isValidPollOptionAt(opts, 11) &&
+             isValidPollOptionAt(opts, 12) &&
+             isValidPollOptionAt(opts, 13) &&
+             isValidPollOptionAt(opts, 14) &&
+             isValidPollOptionAt(opts, 15) &&
+             isValidPollOptionAt(opts, 16) &&
+             isValidPollOptionAt(opts, 17) &&
+             isValidPollOptionAt(opts, 18) &&
+             isValidPollOptionAt(opts, 19);
+    }
+
+    function isOptionInCatPoll(opts, optionName) {
+      return opts is list && (
+        (opts.size() > 0 && opts[0].name == optionName) ||
+        (opts.size() > 1 && opts[1].name == optionName) ||
+        (opts.size() > 2 && opts[2].name == optionName) ||
+        (opts.size() > 3 && opts[3].name == optionName) ||
+        (opts.size() > 4 && opts[4].name == optionName) ||
+        (opts.size() > 5 && opts[5].name == optionName) ||
+        (opts.size() > 6 && opts[6].name == optionName) ||
+        (opts.size() > 7 && opts[7].name == optionName) ||
+        (opts.size() > 8 && opts[8].name == optionName) ||
+        (opts.size() > 9 && opts[9].name == optionName) ||
+        (opts.size() > 10 && opts[10].name == optionName) ||
+        (opts.size() > 11 && opts[11].name == optionName) ||
+        (opts.size() > 12 && opts[12].name == optionName) ||
+        (opts.size() > 13 && opts[13].name == optionName) ||
+        (opts.size() > 14 && opts[14].name == optionName) ||
+        (opts.size() > 15 && opts[15].name == optionName) ||
+        (opts.size() > 16 && opts[16].name == optionName) ||
+        (opts.size() > 17 && opts[17].name == optionName) ||
+        (opts.size() > 18 && opts[18].name == optionName) ||
+        (opts.size() > 19 && opts[19].name == optionName)
+      );
+    }
+
+    function isValidCat(data) {
+      let requiredFields = [
+        'code', 'isNamed', 'name', 'bio', 'photo',
+        'vaccineSummary', 'vaccineDue', 'pollOptions',
+        'createdAt', 'updatedAt'
+      ];
+      let allowedFields = [
+        'code', 'isNamed', 'name', 'bio', 'photo', 'photos',
+        'vaccineSummary', 'vaccineDue', 'pollOptions',
+        'createdAt', 'updatedAt'
+      ];
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(requiredFields) &&
+             validStringLength('code', 1, 20) &&
+             data.isNamed is bool &&
+             validStringLength('name', 1, 80) &&
+             validStringLength('bio', 1, 1000) &&
+             isValidCatPhoto(data.photo) &&
+             (!('photos' in data) || isValidCatPhotosList(data.photos)) &&
+             validStringLength('vaccineSummary', 1, 200) &&
+             data.vaccineDue is bool &&
+             isValidPollOptionsList(data.pollOptions, data.isNamed) &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidVaccine(data) {
+      let requiredFields = ['catId', 'type', 'date', 'vet', 'status', 'createdAt'];
+      return hasOnlyAllowedFields(requiredFields) &&
+             hasRequiredFields(requiredFields) &&
+             validStringLength('catId', 1, 100) &&
+             validStringLength('type', 1, 100) &&
+             isValidDateOnlyString(data.date) &&
+             validStringLength('vet', 1, 120) &&
+             data.status in ['upcoming', 'urgent', 'done'] &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidClubSettings(data) {
+      return hasOnlyAllowedFields(['whatsappUrl', 'seeded', 'updatedAt']) &&
+             hasRequiredFields(['whatsappUrl', 'updatedAt']) &&
+             isValidUrl(data.whatsappUrl) &&
+             data.whatsappUrl.size() <= 500 &&
+             (!('seeded' in data) || data.seeded is bool) &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidPollVoteCreate(voteId) {
+      let data = request.resource.data;
+      let catPath = /databases/$(database)/documents/cats/$(data.catId);
+      return hasOnlyAllowedFields(['catId', 'optionName', 'createdAt']) &&
+             hasRequiredFields(['catId', 'optionName', 'createdAt']) &&
+             validStringLength('catId', 1, 100) &&
+             validStringLength('optionName', 1, 60) &&
+             data.createdAt == request.time &&
+             voteId == data.catId + '_' + request.auth.uid &&
+             !exists(/databases/$(database)/documents/pollVotes/$(voteId)) &&
+             exists(catPath) &&
+             get(catPath).data.isNamed == false &&
+             isOptionInCatPoll(get(catPath).data.pollOptions, data.optionName);
+    }
+
+    function isValidAdminRequest(data) {
+      let requiredFields = ['uid', 'email', 'displayName', 'note', 'role', 'createdAt'];
+      let allowedFields = [
+        'uid', 'email', 'displayName', 'note', 'role', 'createdAt',
+        'reviewedBy', 'reviewedAt', 'kvkkAccepted', 'kvkkAcceptedAt'
+      ];
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(requiredFields) &&
+             validStringLength('uid', 1, 128) &&
+             isValidEmail(data.email) &&
+             validStringLength('displayName', 1, 80) &&
+             validStringLength('note', 0, 200) &&
+             data.role in ['pending', 'admin', 'approver', 'superadmin', 'rejected'] &&
+             data.createdAt is timestamp &&
+             (!('reviewedBy' in data) || isValidEmail(data.reviewedBy)) &&
+             (!('reviewedAt' in data) || data.reviewedAt is timestamp) &&
+             (!('kvkkAccepted' in data) || data.kvkkAccepted == true) &&
+             (!('kvkkAcceptedAt' in data) || data.kvkkAcceptedAt is timestamp);
+    }
+
+    function isValidAdminRequestCreate(userId) {
+      let data = request.resource.data;
+      return isNonAnonAuth() &&
+             isOwner(userId) &&
+             uidUnchanged() &&
+             isValidAdminRequest(data) &&
+             data.uid == request.auth.uid &&
+             'email' in request.auth.token &&
+             request.auth.token.email is string &&
+             data.email.lower() == request.auth.token.email.lower() &&
+             data.createdAt == request.time &&
+             (!('kvkkAcceptedAt' in data) || data.kvkkAcceptedAt == request.time) &&
+             (
+               data.role == 'pending' ||
+               (isSuperAdminEmailVerified() && data.role == 'superadmin')
+             );
+    }
+
+    function isValidAdminRequestOwnerUpdate(userId) {
+      let affected = request.resource.data.diff(resource.data).affectedKeys();
+      let isNormalProfileEdit =
+        affected.hasOnly(['note', 'displayName']);
+      let isSuperBootstrapUpgrade =
+        isSuperAdminEmailVerified() &&
+        affected.hasOnly(['role', 'reviewedAt', 'note', 'displayName']) &&
+        request.resource.data.role == 'superadmin' &&
+        (!affected.hasAny(['reviewedAt']) || request.resource.data.reviewedAt == request.time);
+      return isNonAnonAuth() &&
+             isOwner(userId) &&
+             (isNormalProfileEdit || isSuperBootstrapUpgrade);
+    }
+
+    function isValidAdminRequestReview(userId) {
+      let affected = request.resource.data.diff(resource.data).affectedKeys();
+      let reviewerMatch =
+        'email' in request.auth.token &&
+        request.auth.token.email is string &&
+        'reviewedBy' in request.resource.data &&
+        request.resource.data.reviewedBy is string &&
+        request.resource.data.reviewedBy.lower() == request.auth.token.email.lower() &&
+        'reviewedAt' in request.resource.data &&
+        request.resource.data.reviewedAt == request.time;
+
+      // Case B: Approver (superadmin or approver) reviewing a pending application
+      let isPendingReview =
+        isApprover() &&
+        resource.data.role == 'pending' &&
+        request.resource.data.role in ['admin', 'rejected'];
+
+      // Case C: SuperAdmin modifying an existing admin, approver, or rejected user
+      // (never demotes superadmin and never promotes anyone to superadmin)
+      let isSuperAdminRoleChange =
+        isSuperAdmin() &&
+        resource.data.role in ['admin', 'approver', 'rejected'] &&
+        request.resource.data.role in ['admin', 'approver', 'rejected', 'pending'];
+
+      return request.auth.uid != userId &&
+             affected.hasOnly(['role', 'reviewedBy', 'reviewedAt']) &&
+             reviewerMatch &&
+             (isPendingReview || isSuperAdminRoleChange);
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // Public campus cat archive (read intentionally public for index.html)
+    match /cats/{catId} {
+      allow read: if true;
+      allow create: if isApprovedAdmin() &&
+                       isValidCat(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time;
+      allow update: if isApprovedAdmin() &&
+                       isValidCat(request.resource.data) &&
+                       request.resource.data.updatedAt == request.time &&
+                       (
+                         request.resource.data.createdAt == resource.data.createdAt ||
+                         (
+                           catId in ['cat-1', 'cat-2', 'cat-3', 'cat-4', 'cat-5', 'cat-6'] &&
+                           request.resource.data.createdAt == request.time
+                         )
+                       );
+      allow delete: if isApprovedAdmin();
+    }
+
+    // Public vaccine schedule (read intentionally public for index.html)
+    match /vaccines/{vacId} {
+      allow read: if true;
+      allow create: if isApprovedAdmin() &&
+                       isValidVaccine(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       existsAfter(/databases/$(database)/documents/cats/$(request.resource.data.catId));
+      allow update: if isApprovedAdmin() &&
+                       isValidVaccine(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['catId']) &&
+                       (
+                         request.resource.data.createdAt == resource.data.createdAt ||
+                         (
+                           vacId in ['vac-1', 'vac-2', 'vac-3', 'vac-4', 'vac-5', 'vac-6'] &&
+                           request.resource.data.createdAt == request.time
+                         )
+                       );
+      allow delete: if isApprovedAdmin();
+    }
+
+    // Public club settings (singleton: settings/club)
+    match /settings/club {
+      allow read: if true;
+      allow create, update: if isApprovedAdmin() &&
+                               isValidClubSettings(request.resource.data) &&
+                               request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Public naming poll votes (no PII; 1 locked vote per cat per Auth UID)
+    match /pollVotes/{voteId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && isValidPollVoteCreate(voteId);
+      allow update: if false;
+      allow delete: if isApprovedAdmin();
+    }
+
+    // Staff access requests & role assignments (CONTAINS PII: email)
+    match /adminRequests/{userId} {
+      allow read: if isNonAnonAuth() && (isOwner(userId) || isApprover());
+      allow create: if isValidAdminRequestCreate(userId);
+      allow update: if isNonAnonAuth() &&
+                       uidNotModified() &&
+                       areImmutableFieldsUnchanged(['uid', 'email', 'createdAt', 'kvkkAccepted', 'kvkkAcceptedAt']) &&
+                       isValidAdminRequest(request.resource.data) &&
+                       (
+                         isValidAdminRequestOwnerUpdate(userId) ||
+                         isValidAdminRequestReview(userId)
+                       );
+      allow delete: if (isSuperAdmin() && request.auth.uid != userId && resource.data.role != 'superadmin') ||
+                       (isNonAnonAuth() && isOwner(userId) && resource.data.role == 'pending');
+    }
+
+    // Default deny for all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

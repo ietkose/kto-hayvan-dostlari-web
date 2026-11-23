@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetim Paneli | KTO Hayvan Dostları Topluluğu</title>
+    <link rel="icon" type="image/svg+xml" href="logo-icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('kto_theme') === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="style.css?v=20261114v14">
+</head>
+<body>
+    <!-- Üst Kayan Bilgi Şeridi -->
+    <div class="top-ticker">
+        <div class="ticker-track">
+            <div class="ticker-group">
+                <span>⚙ KTO HAYVAN DOSTLARI TOPLULUĞU · GÜVENLİ YÖNETİM MERKEZİ</span>
+                <span>✦ YALNIZCA ONAYLI YÖNETİM EKİBİ ARŞİV, OYLAMA VE AŞI TAKVİMİNİ DÜZENLEYEBİLİR</span>
+                <span>★ YAPILAN TÜM DEĞİŞİKLİKLER FIREBASE BULUT VERİTABANINA ANINDA KAYDEDİLİR</span>
+            </div>
+            <div class="ticker-group" aria-hidden="true">
+                <span>⚙ KTO HAYVAN DOSTLARI TOPLULUĞU · GÜVENLİ YÖNETİM MERKEZİ</span>
+                <span>✦ YALNIZCA ONAYLI YÖNETİM EKİBİ ARŞİV, OYLAMA VE AŞI TAKVİMİNİ DÜZENLEYEBİLİR</span>
+                <span>★ YAPILAN TÜM DEĞİŞİKLİKLER FIREBASE BULUT VERİTABANINA ANINDA KAYDEDİLİR</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Üst Bar -->
+    <header class="navbar">
+        <div class="navbar-top-row">
+            <a href="index.html" class="nav-brand" style="text-decoration:none;">
+                <div class="brand-logo-wrapper">
+                    <img src="logo-icon.svg" alt="KTO Hayvan Dostları Topluluğu Logosu" class="club-vector-logo-icon">
+                </div>
+                <div class="brand-text">
+                    <h1>YÖNETİM PANELİ</h1>
+                    <span class="brand-badge">YETKİLİ KULLANICI GİRİŞİ & KONTROL</span>
+                </div>
+            </a>
+            <div class="navbar-actions">
+                <button type="button" id="navThemeToggle" class="mobile-theme-btn" data-theme-toggle aria-label="Karanlık veya Aydınlık Moda Geç" aria-pressed="false" title="Karanlık / Aydınlık Mod">
+                    <span class="theme-glyph">◐</span>
+                </button>
+                <button type="button" id="mobileMenuToggle" class="mobile-menu-btn" aria-label="Menüyü Aç veya Kapat" aria-expanded="false">
+                    <span class="menu-icon">≡</span>
+                    <span class="menu-text">Menü</span>
+                </button>
+            </div>
+        </div>
+        <nav class="nav-links" id="navLinks">
+            <a href="#admin-approvals" class="nav-btn admin-only-nav approver-only-nav hidden">Yetki İstekleri</a>
+            <a href="#admin-cats" class="nav-btn admin-only-nav hidden">Kedi Yönetimi</a>
+            <a href="#admin-polls" class="nav-btn admin-only-nav hidden">Oylama</a>
+            <a href="#admin-vaccines" class="nav-btn admin-only-nav hidden">Aşı Takvimi</a>
+            <a href="#admin-settings" class="nav-btn admin-only-nav hidden">Ayarlar</a>
+            <button type="button" id="adminDesktopThemeToggle" class="nav-btn admin-theme-nav-btn" data-theme-toggle aria-label="Karanlık veya Aydınlık Moda Geç" aria-pressed="false">
+                <span class="theme-glyph">◐</span>
+                <span class="theme-label">Karanlık Mod</span>
+            </button>
+            <a href="index.html" class="nav-btn nav-cta">Ana Siteye Dön →</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <!-- ================================================
+             GÜVENLİ GİRİŞ & YETKİ ONAY KAPISI (#adminAuthGate)
+             ================================================ -->
+        <section id="adminAuthGate" class="art-panel auth-gate-panel">
+            <div class="panel-header">
+                <span class="panel-title">✦ YÖNETİM EKİBİ GİRİŞİ VE YETKİ BAŞVURUSU</span>
+                <span class="panel-ornament">★ ★ ★</span>
+            </div>
+            <div class="section-inner">
+                <!-- 0. Dosya Protokolü Uyarısı (Sadece file:// ile açılırsa görünür) -->
+                <div id="fileProtocolWarning" class="auth-alert hidden">
+                    <div style="margin-bottom:10px;">
+                        <strong>[!] Yerel Dosya Modu (file://) Algılandı:</strong> Tarayıcı güvenliği ve Firebase Auth kuralları gereği yönetim paneli doğrudan masaüstü dosyasından çalışmaz. Lütfen canlı alan adınız üzerinden giriş yapın:
+                    </div>
+                    <a href="https://ktohayvandostlari.web.app/admin" class="art-btn btn-amber btn-sm">Canlı Yönetim Paneline Git (ktohayvandostlari.web.app/admin) →</a>
+                </div>
+
+                <!-- 1. Yükleniyor Durumu -->
+                <div id="authLoadingBox" class="auth-state-box">
+                    <h3>Oturum ve yetki durumu kontrol ediliyor...</h3>
+                    <p>Lütfen bekleyin, Firebase güvenlik doğrulaması yapılıyor.</p>
+                </div>
+
+                <!-- 2. Giriş & Yetki İsteme Kutusu -->
+                <div id="authLoginBox" class="auth-state-box hidden">
+                    <div class="auth-intro">
+                        <span class="tag-amber">YETKİLİ ERİŞİM</span>
+                        <h2>Yönetim Ekibi Oturumu</h2>
+                        <p>
+                            Ana sayfayı ziyaret etmek için giriş gerekmez; ancak arşivi düzenleyebilmek için onaylı bir yönetim ekibi hesabıyla oturum açmanız gerekir. İlk kez giriyorsanız yetki talebiniz otomatik olarak Sistem Yöneticisi, Başkan veya Başkan Yardımcısı onayına sunulur.
+                        </p>
+                        <p style="margin-top:8px; font-size:0.86rem; color:var(--twilight-teal-text); font-weight:700;">
+                            ✦ Sistem Yöneticisi Google ile giriş yaptığında kendini onaylamaya gerek kalmadan doğrudan tam yetkiyle açılır.
+                        </p>
+                    </div>
+
+                    <div class="auth-card-grid">
+                        <!-- Sol: Google ile Hızlı Giriş -->
+                        <div class="auth-subcard">
+                            <h3>Google Hesabı ile Devam Et</h3>
+                            <p>Kulüp mailiniz veya kişisel Google hesabınız ile tek tıkla giriş yapıp yetki başvurusu oluşturabilirsiniz.</p>
+                            <label class="kvkk-checkbox-row" for="googleKvkkConsent">
+                                <input type="checkbox" id="googleKvkkConsent">
+                                <span>
+                                    İlk kez yetki başvurusu yapıyorsam <button type="button" class="kvkk-link-btn" data-open-kvkk>KVKK Aydınlatma Metni</button>'ni okudum; ad-soyad ve e-posta bilgilerimin yetkilendirme amacıyla işlenmesini kabul ediyorum.
+                                </span>
+                            </label>
+                            <button type="button" id="googleSignInBtn" class="art-btn btn-gold" style="width:100%;">
+                                G · Google ile Giriş Yap / Yetki İste
+                            </button>
+                        </div>
+
+                        <!-- Sağ: E-posta & Şifre Formu -->
+                        <div class="auth-subcard">
+                            <div class="auth-tabs">
+                                <button type="button" id="tabSignIn" class="auth-tab-btn active">Giriş Yap</button>
+                                <button type="button" id="tabSignUp" class="auth-tab-btn">Yetki İste (Yeni Kayıt)</button>
+                            </div>
+
+                            <!-- Giriş Formu -->
+                            <form id="emailSignInForm" class="auth-form">
+                                <div class="form-group">
+                                    <label>E-posta Adresi</label>
+                                    <input type="email" id="loginEmail" class="art-input" placeholder="ornek@karatay.edu.tr" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Şifre</label>
+                                    <input type="password" id="loginPassword" class="art-input" placeholder="••••••••" required minlength="6">
+                                </div>
+                                <button type="submit" class="art-btn btn-amber" style="width:100%;">Panele Giriş Yap →</button>
+                                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+                                    Giriş yaparak <button type="button" class="kvkk-link-btn" data-open-kvkk>KVKK Aydınlatma Metni</button>'ni inceleyebilirsiniz.
+                                </p>
+                            </form>
+
+                            <!-- Yeni Kayıt / Yetki Talebi Formu -->
+                            <form id="emailSignUpForm" class="auth-form hidden">
+                                <div class="form-group">
+                                    <label>Ad Soyad</label>
+                                    <input type="text" id="signupName" class="art-input" placeholder="Örn: Zeynep Kaya" required maxlength="60">
+                                </div>
+                                <div class="form-group">
+                                    <label>Topluluktaki Göreviniz / Not</label>
+                                    <input type="text" id="signupNote" class="art-input" placeholder="Örn: Besleme & Sağlık Ekibi" required maxlength="150">
+                                </div>
+                                <div class="form-group">
+                                    <label>E-posta Adresi</label>
+                                    <input type="email" id="signupEmail" class="art-input" placeholder="ornek@karatay.edu.tr" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Şifre (En az 6 karakter)</label>
+                                    <input type="password" id="signupPassword" class="art-input" placeholder="En az 6 karakter" required minlength="6">
+                                </div>
+                                <label class="kvkk-checkbox-row" for="signupKvkkConsent">
+                                    <input type="checkbox" id="signupKvkkConsent" required>
+                                    <span>
+                                        <button type="button" class="kvkk-link-btn" data-open-kvkk>KVKK Aydınlatma Metni</button>'ni okudum; kişisel verilerimin yönetim yetkilendirmesi kapsamında işlenmesine ve Google Firebase altyapısında saklanmasına açık rıza veriyorum.
+                                    </span>
+                                </label>
+                                <button type="submit" class="art-btn btn-teal" style="width:100%;">Hesap Oluştur ve Yetki İste →</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="kvkk-notice-bar">
+                        <span>
+                            ✦ <strong>Veri Güvenliği & KVKK:</strong> Başvuru sırasında alınan ad-soyad ve e-posta verileri şifreli Firebase altyapısında tutulur; yalnızca sizinle ve yetkili onay ekibiyle paylaşılır.
+                        </span>
+                        <button type="button" class="art-btn btn-light btn-sm" data-open-kvkk>KVKK Aydınlatma Metni</button>
+                    </div>
+                </div>
+
+                <!-- 2.5 İlk Kez Google ile Başvuru Yapan Kullanıcı İçin KVKK Onay Adımı -->
+                <div id="authKvkkConfirmBox" class="auth-state-box hidden">
+                    <span class="badge status-upcoming">· 6698 Sayılı KVKK Açık Rıza Onayı</span>
+                    <h2 style="margin-top:12px;">Yetki Başvurunuzu Tamamlamak İçin Onaylayın</h2>
+                    <p class="auth-status-desc">
+                        Google hesabınızla ilk kez yönetim yetkisi başvurusunda bulunuyorsunuz. Başvuru kaydınızın oluşturulabilmesi için ad-soyad ve e-posta bilgilerinizin yetkilendirme amacıyla işlenmesine açık rıza vermeniz gerekmektedir.
+                    </p>
+                    <div class="pending-profile-card">
+                        <div><strong>Ad Soyad:</strong> <span id="kvkkConfirmName">-</span></div>
+                        <div><strong>E-posta:</strong> <span id="kvkkConfirmEmail">-</span></div>
+                    </div>
+                    <div class="auth-action-row">
+                        <button type="button" id="confirmGoogleKvkkBtn" class="art-btn btn-teal">✓ KVKK Metnini Okudum, Onayla ve Başvur</button>
+                        <button type="button" id="cancelGoogleKvkkBtn" class="art-btn btn-light">✕ Vazgeç ve Çıkış Yap</button>
+                        <button type="button" class="art-btn btn-gold btn-sm" data-open-kvkk>Aydınlatma Metnini Oku</button>
+                    </div>
+                </div>
+
+                <!-- 3. E-posta Doğrulama Bekleniyor (Sadece E-posta/Şifre kullanan Sistem Yöneticisi için) -->
+                <div id="authVerifyBox" class="auth-state-box hidden">
+                    <span class="badge status-upcoming">· E-posta Doğrulaması Gerekli</span>
+                    <h2 style="margin-top:12px;">Lütfen E-posta Adresinizi Doğrulayın</h2>
+                    <p>Güvenlik kuralları gereği Sistem Yöneticisi hesabının e-posta doğrulamasını tamamlaması gerekir. Google ile giriş yaptığınızda bu adım otomatik geçilir.</p>
+                    <div class="auth-action-row">
+                        <button type="button" id="resendVerifyBtn" class="art-btn btn-amber">Doğrulama Bağlantısı Gönder</button>
+                        <button type="button" id="checkVerifyBtn" class="art-btn btn-teal">Doğruladım, Kontrol Et ✓</button>
+                        <button type="button" id="verifySignOutBtn" class="art-btn btn-light">Çıkış Yap</button>
+                    </div>
+                </div>
+
+                <!-- 4. Onay Bekliyor Durumu (role === 'pending') -->
+                <div id="authPendingBox" class="auth-state-box hidden">
+                    <span class="badge status-upcoming">· Yetki İsteğiniz Onay Bekliyor</span>
+                    <h2 style="margin-top:14px;">Başvurunuz Yönetime İletildi</h2>
+                    <p class="auth-status-desc">
+                        Hesabınız oluşturuldu ancak henüz yönetici onayı verilmedi. Mevcut yönetici onayladığında aşağıdaki butona basarak panele erişebilirsiniz.
+                    </p>
+                    <div class="pending-profile-card">
+                        <div><strong>Ad Soyad:</strong> <span id="pendingUserName">-</span></div>
+                        <div><strong>E-posta:</strong> <span id="pendingUserEmail">-</span></div>
+                        <div><strong>Görev / Not:</strong> <span id="pendingUserNote">-</span></div>
+                    </div>
+                    <form id="updatePendingNoteForm" class="pending-note-form">
+                        <input type="text" id="pendingNoteInput" class="art-input" placeholder="Onaylayacak yöneticiye kendinizi tanıtan kısa bir not yazın..." maxlength="150" required>
+                        <button type="submit" class="art-btn btn-teal btn-sm">Notu Güncelle</button>
+                    </form>
+                    <div class="auth-action-row">
+                        <button type="button" id="refreshStatusBtn" class="art-btn btn-amber">Onay Durumunu Kontrol Et</button>
+                        <button type="button" id="withdrawPendingBtn" class="art-btn btn-danger">Başvuruyu Geri Çek ve Verimi Sil</button>
+                        <button type="button" id="pendingSignOutBtn" class="art-btn btn-light">Çıkış Yap</button>
+                    </div>
+                </div>
+
+                <!-- 5. Reddedildi Durumu (role === 'rejected') -->
+                <div id="authRejectedBox" class="auth-state-box hidden">
+                    <span class="badge status-urgent">! Yetki Başvurusu Onaylanmadı</span>
+                    <h2 style="margin-top:14px;">Erişim Talebiniz Reddedildi</h2>
+                    <p>Bu hesap için yönetim paneli erişim yetkisi kaldırılmış veya onaylanmamıştır. Bir hata olduğunu düşünüyorsanız topluluk başkanıyla iletişime geçebilirsiniz.</p>
+                    <div class="auth-action-row">
+                        <button type="button" id="rejectedSignOutBtn" class="art-btn btn-light">Çıkış Yap</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================
+             ONAYLI YÖNETİM PANELİ (#adminDashboard)
+             (Yalnızca role === 'admin' || 'superadmin' ise açılır)
+             ================================================ -->
+        <div id="adminDashboard" class="hidden" style="display:flex; flex-direction:column; gap:50px;">
+            <!-- Aktif Oturum Bilgi Şeridi -->
+            <div class="staff-session-bar art-box">
+                <div class="staff-session-info">
+                    <span id="staffRoleBadge" class="badge status-done">★ Sistem Yöneticisi</span>
+                    <div>
+                        <strong id="staffDisplayName">Yönetici</strong>
+                        <span id="staffEmailText" class="staff-email"></span>
+                    </div>
+                </div>
+                <button type="button" id="adminSignOutBtn" class="art-btn btn-light btn-sm">Güvenli Çıkış ✕</button>
+            </div>
+
+            <!-- 0. YETKİ İSTEKLERİ VE YÖNETİM EKİBİ ONAY PANELİ (Sistem Yöneticisi, Başkan & Başkan Yrd.) -->
+            <section id="admin-approvals" class="art-panel approver-only-section hidden">
+                <div class="panel-header">
+                    <span class="panel-title">★ YETKİ İSTEKLERİ VE EKİP YÖNETİMİ · Bekleyenler (<span id="pendingRequestsCount">0</span>)</span>
+                    <span class="panel-ornament">✦ ✦ ✦</span>
+                </div>
+                <div class="section-inner">
+                    <div class="admin-two-col">
+                        <!-- Sol: Onay Bekleyen Başvurular -->
+                        <div class="admin-list-card">
+                            <h3>· Onay Bekleyen Yetki İstekleri</h3>
+                            <p style="font-size:0.86rem; color:var(--text-muted);">
+                                Sistem Yöneticisi, Başkan ve Başkan Yardımcısı; yönetim paneline başvuru yapan kişileri buradan inceleyip onaylayabilir veya reddedebilir.
+                            </p>
+                            <div id="pendingRequestsList" class="admin-items-list">
+                                <!-- app.js ile doldurulacak -->
+                            </div>
+                        </div>
+
+                        <!-- Sağ: Onaylı Yönetim Ekibi -->
+                        <div class="admin-list-card">
+                            <h3>✓ Onaylı Yönetim Ekibi</h3>
+                            <p style="font-size:0.86rem; color:var(--text-muted);">
+                                Sistem Yöneticisi, buradan Başkan ve Başkan Yardımcısına "Onay Yetkisi" verebilir veya ekip üyelerinin yetkisini düzenleyebilir.
+                            </p>
+                            <div id="approvedAdminsList" class="admin-items-list">
+                                <!-- app.js ile doldurulacak -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. KEDİ EKLEME VE MEVCUT KEDİLERİ YÖNETME -->
+            <section id="admin-cats" class="art-panel">
+                <div class="panel-header amber-bar">
+                    <span class="panel-title">✦ KEDİ ARŞİV YÖNETİMİ · Yeni Kedi Ekle & İsim Oylaması Başlat</span>
+                    <span class="panel-ornament">★ ★ ★</span>
+                </div>
+                <div class="section-inner">
+                    <div class="admin-two-col">
+                        <!-- Sol: Yeni Kedi Ekleme Formu -->
+                        <form id="adminAddCatForm" class="admin-form-card">
+                            <h3>+ Arşive Yeni Kedi Ekle</h3>
+                            <div class="form-group">
+                                <label>Kedinin İsim Durumu</label>
+                                <select id="adminCatNamedStatus" class="art-input">
+                                    <option value="named">İsmi Var (Arşive Doğrudan İsimli Ekle)</option>
+                                    <option value="unnamed">İsmi Yok (İsim Oylaması Başlat)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="adminCatNameGroup">
+                                <label>Kedinin İsmi</label>
+                                <input type="text" id="adminCatName" class="art-input" placeholder="Örn: Pamuk, Korsan, Lokum...">
+                            </div>
+                            <div class="form-group hidden" id="adminCatPollGroup">
+                                <label>Oylamaya Sunulacak Aday İsimler (Virgülle ayırın)</label>
+                                <input type="text" id="adminCatPollOptions" class="art-input" placeholder="Örn: Puding, Sütlaç, Bulut, Badem">
+                                <small style="color:var(--text-muted); font-weight:600;">Ziyaretçiler sadece sizin belirlediğiniz bu aday isimlere 1 kez oy verebilir.</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Kısa Karakter Özelliği / Tanıtım Notu</label>
+                                <input type="text" id="adminCatBio" class="art-input" placeholder="Örn: Kendini sevdirmeye bayılır, yaş mama gurmesi..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Fotoğraf Bağlantıları (URL) veya Bilgisayarınızdan Seçin (En Fazla 3 Görsel)</label>
+                                <textarea id="adminCatPhotoUrl" rows="2" class="art-input" placeholder="En fazla 3 görsel URL'si (alt alta veya virgülle): https://..."></textarea>
+                                <input type="file" id="adminCatPhotoFile" accept="image/*" multiple class="art-file-input">
+                                <small id="adminPhotoSelectionHint" style="color:var(--text-muted); font-weight:600;">En fazla 3 görsel seçebilirsiniz. İlk görsel kapak fotoğrafı olur, tamamı tıklandığında galeri olarak açılır.</small>
+                            </div>
+                            <button type="submit" class="art-btn btn-amber" style="width:100%;">Kediyi Arşive Kaydet →</button>
+                        </form>
+
+                        <!-- Sağ: Mevcut Kediler Listesi -->
+                        <div class="admin-list-card">
+                            <h3>Kayıtlı Kediler (<span id="adminCatCount">0</span>)</h3>
+                            <div id="adminCatsList" class="admin-items-list">
+                                <!-- app.js ile doldurulacak -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. İSİM OYLAMASI (ANKET) YÖNETİMİ -->
+            <section id="admin-polls" class="art-panel">
+                <div class="panel-header">
+                    <span class="panel-title">◈ OYLAMA KONTROL MERKEZİ · Aday İsimleri Düzenle & Oylamayı Sonlandır</span>
+                    <span class="panel-ornament">✦ ✦ ✦</span>
+                </div>
+                <div class="section-inner">
+                    <p style="margin-bottom:18px; font-weight:500; color:var(--text-muted);">
+                        İsmi olmayan kediler için devam eden oylamalara yeni aday seçenek ekleyebilir, istemediğiniz seçenekleri kaldırabilir veya oylamayı tamamlayıp kazanan ismi kedinin resmi kimliğine atayabilirsiniz.
+                    </p>
+                    <div id="adminPollsContainer" class="polls-grid">
+                        <!-- app.js ile doldurulacak -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. AŞI TAKVİMİ YÖNETİMİ -->
+            <section id="admin-vaccines" class="art-panel">
+                <div class="panel-header teal-bar">
+                    <span class="panel-title">✚ AŞI TAKVİMİ YÖNETİMİ · Yeni Aşı Ekle, Durum Güncelle & Sil</span>
+                    <span class="panel-ornament">★ ★ ★</span>
+                </div>
+                <div class="section-inner">
+                    <div class="admin-two-col">
+                        <!-- Sol: Yeni Aşı Ekleme -->
+                        <form id="adminAddVaccineForm" class="admin-form-card">
+                            <h3>+ Yeni Aşı / Bakım Planla</h3>
+                            <div class="form-group">
+                                <label>Kedi Seçin</label>
+                                <select id="adminVaccineCatSelect" class="art-input" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Uygulama Türü</label>
+                                <select id="adminVaccineType" class="art-input" required>
+                                    <option value="İç - Dış Parazit Uygulaması">İç - Dış Parazit Uygulaması</option>
+                                    <option value="Karma Aşı (1. Doz)">Karma Aşı (1. Doz)</option>
+                                    <option value="Karma Aşı (Rapel)">Karma Aşı (Rapel)</option>
+                                    <option value="Kuduz Aşısı">Kuduz Aşısı</option>
+                                    <option value="Lösemi Aşısı">Lösemi Aşısı</option>
+                                    <option value="Genel Muayene & Vitamin">Genel Muayene & Vitamin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Planlanan / Uygulanan Tarih</label>
+                                <input type="date" id="adminVaccineDate" class="art-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Sorumlu Veteriner / Gönüllü</label>
+                                <input type="text" id="adminVaccineVet" class="art-input" placeholder="Örn: Kampüs Vet / Zeynep" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Başlangıç Durumu</label>
+                                <select id="adminVaccineStatus" class="art-input">
+                                    <option value="upcoming">· Planlandı</option>
+                                    <option value="urgent">! Günü Geldi</option>
+                                    <option value="done">✓ Tamamlandı</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="art-btn btn-teal" style="width:100%;">Aşı Takvimine Kaydet ✚</button>
+                        </form>
+
+                        <!-- Sağ: Mevcut Aşı Kayıtları Kontrol Tablosu -->
+                        <div class="admin-list-card">
+                            <h3>Aşı Kayıtları Kontrol Listesi</h3>
+                            <div class="table-responsive">
+                                <table class="art-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Kedi</th>
+                                            <th>Aşı Türü</th>
+                                            <th>Tarih</th>
+                                            <th>Durum Değiştir</th>
+                                            <th>Sil</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminVaccineTableBody">
+                                        <!-- app.js ile doldurulacak -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. WHATSAPP GRUP LİNKİ VE TOPLULUK AYARLARI -->
+            <section id="admin-settings" class="art-panel">
+                <div class="panel-header">
+                    <span class="panel-title">⚙ TOPLULUK AYARLARI · WhatsApp Grup Bağlantısı</span>
+                    <span class="panel-ornament">✦</span>
+                </div>
+                <div class="section-inner">
+                    <form id="adminWhatsappForm" class="admin-form-card" style="max-width:680px; margin:0 auto;">
+                        <h3>WhatsApp Grup Bağlantısı & Otomatik Karekod</h3>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;">
+                            Buraya girdiğiniz bağlantı hem ana sitedeki <strong>"WhatsApp Grubuna Katıl"</strong> butonunu hem de <strong>Karekodu (QR)</strong> tüm ziyaretçiler için günceller.
+                        </p>
+                        <div class="form-group">
+                            <label>WhatsApp Davet Bağlantısı</label>
+                            <input type="url" id="adminWhatsappInput" class="art-input" placeholder="https://chat.whatsapp.com/..." required>
+                        </div>
+                        <button type="submit" class="art-btn btn-whatsapp">Bağlantıyı ve Karekodu Güncelle →</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="index.html" class="footer-left footer-top-link">
+                <img src="logo-icon.svg" alt="KTO Hayvan Dostları" class="footer-logo-img">
+                <div>
+                    <h3>KTO Hayvan Dostları Topluluğu <span class="back-top-arrow">←</span></h3>
+                    <p>KTO Karatay Üniversitesi · Güvenli Yönetim Merkezi</p>
+                </div>
+            </a>
+            <div class="footer-right">
+                <button type="button" class="art-btn btn-light btn-sm" data-open-kvkk>KVKK Aydınlatma Metni</button>
+                <a href="index.html" class="art-btn btn-amber btn-sm">Ana Siteye Dön →</a>
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <div class="footer-credit-group">
+                <span>© 2026 · Konya</span>
+                <span class="footer-dev-badge"><span class="dev-star">✦</span> Developed by İrem Dudu Köse</span>
+            </div>
+            <span class="footer-security-note">✦ Firebase Güvenlik Kuralları &amp; 6698 Sayılı KVKK İlkeleriyle Korunur</span>
+        </div>
+    </footer>
+
+    <!-- KVKK Aydınlatma Metni Modalı -->
+    <div id="kvkkModal" class="kvkk-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="kvkkModalTitle">
+        <div class="kvkk-modal-card">
+            <div class="panel-header">
+                <span class="panel-title" id="kvkkModalTitle">✦ KİŞİSEL VERİLERİN KORUNMASI (KVKK) AYDINLATMA METNİ</span>
+                <button type="button" class="art-btn btn-light btn-sm" data-close-kvkk aria-label="Kapat">✕</button>
+            </div>
+            <div class="kvkk-modal-body">
+                <div>
+                    <h4>1. Veri Sorumlusu</h4>
+                    <p>Bu aydınlatma metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında, <strong>KTO Karatay Üniversitesi Hayvan Dostları Topluluğu</strong> yönetim ekibi tarafından yürütülen kampüs kedi arşivi platformu için hazırlanmıştır.</p>
+                </div>
+                <div>
+                    <h4>2. İşlenen Kişisel Veriler</h4>
+                    <ul>
+                        <li><strong>Ana Sayfa Ziyaretçileri:</strong> Kampüs kedilerini görüntüleme ve isim oylamaları için ad, e-posta veya kimlik bilgisi toplanmaz; yalnızca çift oyu önlemek amacıyla anonim oturum kimliği ve tema tercihi tarayıcınızda tutulur.</li>
+                        <li><strong>Yönetim Ekibi Adayları ve Yöneticiler:</strong> Yönetim paneline giriş ve yetki başvurusu sırasında yalnızca <strong>Ad Soyad</strong>, <strong>E-posta Adresi</strong> ve <strong>Topluluk Görev Notu</strong> işlenir.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>3. İşleme Amacı ve Güvenlik Tedbirleri</h4>
+                    <p>Toplanan veriler yalnızca yönetim paneli kimlik doğrulaması, yetki onay süreci (Sistem Yöneticisi / Başkan / Başkan Yardımcısı onayı) ve topluluk içi görev koordinasyonu amacıyla işlenir. Veriler HTTPS (TLS) üzerinden şifreli iletilir ve Google Cloud Firestore güvenlik kurallarıyla korunur; e-posta ve başvuru kayıtları yalnızca ilgili kişinin kendisi ve yetkili onay sorumluları tarafından görüntülenebilir.</p>
+                </div>
+                <div>
+                    <h4>4. Verilerin Saklanması ve Yurt Dışı Aktarımı</h4>
+                    <p>Platformun kimlik doğrulama ve veritabanı altyapısı <strong>Google Firebase (Authentication &amp; Cloud Firestore)</strong> servisleri üzerinden sağlanmaktadır. Bu nedenle yönetim başvurusu yapan kişilerin açık rızası doğrultusunda veriler şifreli biçimde Google Cloud küresel sunucularında barındırılır ve üyelik/yetki görevi sona erdiğinde silinir.</p>
+                </div>
+                <div>
+                    <h4>5. KVKK Madde 11 Kapsamındaki Haklarınız</h4>
+                    <p>Onay bekleyen başvurunuzu panel üzerinden tek tıkla silip geri çekebilir; onaylı kayıtlarınızın düzeltilmesi veya tamamen silinmesi için topluluk yönetimi veya yetkili kulüp temsilcileri ile iletişime geçerek KVKK md. 11 kapsamındaki tüm haklarınızı kullanabilirsiniz.</p>
+                </div>
+            </div>
+            <div class="kvkk-modal-footer">
+                <button type="button" class="art-btn btn-gold btn-sm" data-close-kvkk>Anladım, Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mevcut Kedi Görsellerini Yönetme Modalı (En Fazla 3 Görsel) -->
+    <div id="adminCatPhotosModal" class="kvkk-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="adminCatPhotosTitle">
+        <div class="kvkk-modal-card">
+            <div class="panel-header">
+                <span class="panel-title" id="adminCatPhotosTitle">◈ KEDİ GÖRSELLERİ (0 / 3)</span>
+                <button type="button" class="art-btn btn-light btn-sm" data-close-cat-photos aria-label="Kapat">✕</button>
+            </div>
+            <div class="kvkk-modal-body">
+                <div id="adminCatPhotosPreviewGrid" class="admin-cat-photos-grid">
+                    <!-- app.js ile doldurulacak -->
+                </div>
+                <form id="adminCatAddPhotosForm" class="admin-manage-photos-form">
+                    <h4>+ Yeni Görsel Ekle</h4>
+                    <p id="adminManagePhotosHint" style="font-size:0.84rem; color:var(--text-muted); margin-bottom:6px;">Bu kediye en fazla 2 görsel daha ekleyebilirsiniz.</p>
+                    <textarea id="adminManagePhotoUrls" rows="2" class="art-input" placeholder="Görsel URL'si (alt alta veya virgülle): https://..."></textarea>
+                    <input type="file" id="adminManagePhotoFiles" accept="image/*" multiple class="art-file-input">
+                    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:6px;">
+                        <button type="submit" id="adminManagePhotosSubmitBtn" class="art-btn btn-teal btn-sm">+ Görselleri Kaydet</button>
+                    </div>
+                </form>
+            </div>
+            <div class="kvkk-modal-footer">
+                <button type="button" class="art-btn btn-gold btn-sm" data-close-cat-photos>Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirim Toast -->
+    <div id="pixelToast" class="pixel-toast hidden"></div>
+
+    <script>
+        (function () {
+            function showFallbackIfNeeded() {
+                var loadingBox = document.getElementById('authLoadingBox');
+                var loginBox = document.getElementById('authLoginBox');
+                var fileWarn = document.getElementById('fileProtocolWarning');
+                if (window.location.protocol === 'file:') {
+                    if (loadingBox) loadingBox.classList.add('hidden');
+                    if (fileWarn) fileWarn.classList.remove('hidden');
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', showFallbackIfNeeded);
+            } else {
+                showFallbackIfNeeded();
+            }
+            // Mobil Menü Açma / Kapatma (Hem canlıda hem yerel önizlemede çalışır)
+            function bindAdminMobileMenu() {
+                var navbar = document.querySelector('.navbar');
+                var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                var navLinks = document.getElementById('navLinks');
+                if (mobileMenuToggle && navLinks && !mobileMenuToggle.dataset.bound) {
+                    mobileMenuToggle.dataset.bound = '1';
+                    mobileMenuToggle.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        var isOpen = navLinks.classList.toggle('open');
+                        mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
+                        var icon = mobileMenuToggle.querySelector('.menu-icon');
+                        if (icon) icon.textContent = isOpen ? '✕' : '≡';
+                    });
+                    navLinks.querySelectorAll('.nav-btn').forEach(function (link) {
+                        link.addEventListener('click', function () {
+                            navLinks.classList.remove('open');
+                            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                            var icon = mobileMenuToggle.querySelector('.menu-icon');
+                            if (icon) icon.textContent = '≡';
+                        });
+                    });
+                    document.addEventListener('click', function (e) {
+                        if (navLinks.classList.contains('open') && navbar && !navbar.contains(e.target)) {
+                            navLinks.classList.remove('open');
+                            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                            var icon = mobileMenuToggle.querySelector('.menu-icon');
+                            if (icon) icon.textContent = '≡';
+                        }
+                    });
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bindAdminMobileMenu);
+            } else {
+                bindAdminMobileMenu();
+            }
+            // Tema (Aydınlık / Karanlık Mod) Kontrolü
+            function initAdminThemeToggle() {
+                function syncThemeUI(theme) {
+                    var isDark = theme === 'dark';
+                    if (isDark) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                    document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+                        btn.setAttribute('aria-pressed', String(isDark));
+                        var glyph = btn.querySelector('.theme-glyph');
+                        var label = btn.querySelector('.theme-label');
+                        if (glyph) glyph.textContent = isDark ? '✦' : '◐';
+                        if (label) label.textContent = isDark ? 'Aydınlık Mod' : 'Karanlık Mod';
+                    });
+                }
+
+                syncThemeUI(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+                document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+                    if (btn.dataset.themeBound) return;
+                    btn.dataset.themeBound = '1';
+                    btn.addEventListener('click', function () {
+                        var nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                        try {
+                            localStorage.setItem('kto_theme', nextTheme);
+                        } catch (e) {}
+                        syncThemeUI(nextTheme);
+                    });
+                });
+
+                // KVKK Aydınlatma Modalı Kontrolleri
+                var kvkkModal = document.getElementById('kvkkModal');
+                if (kvkkModal && !kvkkModal.dataset.kvkkBound) {
+                    kvkkModal.dataset.kvkkBound = '1';
+                    document.querySelectorAll('[data-open-kvkk]').forEach(function (el) {
+                        el.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            kvkkModal.classList.remove('hidden');
+                        });
+                    });
+                    document.querySelectorAll('[data-close-kvkk]').forEach(function (el) {
+                        el.addEventListener('click', function () {
+                            kvkkModal.classList.add('hidden');
+                        });
+                    });
+                    kvkkModal.addEventListener('click', function (e) {
+                        if (e.target === kvkkModal) kvkkModal.classList.add('hidden');
+                    });
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && !kvkkModal.classList.contains('hidden')) {
+                            kvkkModal.classList.add('hidden');
+                        }
+                    });
+                }
+            }
+            initAdminThemeToggle();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function () {
+                    bindAdminMobileMenu();
+                    initAdminThemeToggle();
+                });
+            }
+            // Canlı sitede modül geç yüklenirse veya engellenirse yükleme ekranında kilitli kalmayı önle
+            setTimeout(function () {
+                if (window.location.protocol === 'file:') return;
+                var loadingBox = document.getElementById('authLoadingBox');
+                var loginBox = document.getElementById('authLoginBox');
+                if (loadingBox && !loadingBox.classList.contains('hidden') && loginBox) {
+                    loadingBox.classList.add('hidden');
+                    loginBox.classList.remove('hidden');
+                }
+            }, 4500);
+        })();
+    </script>
+    <script type="module" src="app.js?v=20261114v14"></script>
+</body>
+</html>
