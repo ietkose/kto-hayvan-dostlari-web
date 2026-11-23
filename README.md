@@ -1,6 +1,6 @@
 # KTO Hayvan Dostları — Campus Animal Community & Management Platform
 
-[Visit Live Web App ➜ https://CANLI-SITE-LINKIN.web.app](https://CANLI-SITE-LINKIN.web.app)
+[Visit Live Web App ➜ https://ktohayvandostlari.web.app](https://ktohayvandostlari.web.app)
 
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
@@ -57,6 +57,7 @@ cd kto-hayvan-dostlari-web
 
 # Open index.html in your preferred browser or use a local static server
 npx serve .
+```
 
 ═════════════════════════════════════════════════════════════════════════════════════════
 
@@ -101,7 +102,7 @@ Firestore Security Rules: Veri bütünlüğünü ve yetkilendirmeyi sağlayan ö
 Barındırma & Dağıtım: Global CDN ve SSL desteğiyle Google Cloud Firebase Hosting[cite: 7].
 
 🐾 Canlı Bağlantılar
-Web Platformu: https://CANLI-SITE-LINKIN.web.app
+Web Platformu: https://ktohayvandostlari.web.app
 
 ═════════════════════════════════════════════════════════════════════════════════════════
 
