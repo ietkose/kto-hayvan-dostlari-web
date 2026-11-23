@@ -64,7 +64,8 @@ Web Platform: https://ktohayvandostlari.web.app
 
 ═════════════════════════════════════════════════════════════════════════════════════════
 
-🇹🇷 TÜRKÇE
+## 🇹🇷 TÜRKÇE
+
 ### 🐾 Proje Hakkında
 KTO Hayvan Dostları; KTO Karatay Üniversitesi Hayvan Dostları Topluluğu için geliştirilmiş, kampüsteki can dostlarımızı öğrencilere tanıtmayı ve topluluk içi içerik yönetimini dijitalleştirmeyi amaçlayan uçtan uca bir web platformudur.
 
