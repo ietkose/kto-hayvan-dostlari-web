@@ -65,44 +65,34 @@ Web Platform: https://ktohayvandostlari.web.app
 ═════════════════════════════════════════════════════════════════════════════════════════
 
 🇹🇷 TÜRKÇE
-🐾 Proje Hakkında
+### 🐾 Proje Hakkında
 KTO Hayvan Dostları; KTO Karatay Üniversitesi Hayvan Dostları Topluluğu için geliştirilmiş, kampüsteki can dostlarımızı öğrencilere tanıtmayı ve topluluk içi içerik yönetimini dijitalleştirmeyi amaçlayan uçtan uca bir web platformudur.
 
 Proje iki ana arayüz üzerinden çalışır:
 
-Topluluk Vitrin Arayüzü (index.html): Kadayıf, Karamel, Miyu, Safinaz ve Este başta olmak üzere kampüs kedilerinin profillerini ve topluluk duyurularını sunan modern ve mobil uyumlu web sitesi.
+1. **Topluluk Vitrin Arayüzü (index.html):** Kadayıf, Karamel, Miyu, Safinaz ve Este başta olmak üzere kampüs kedilerinin profillerini ve topluluk duyurularını sunan modern ve mobil uyumlu web sitesi.
 
-Yönetim Paneli (admin.html): Topluluk yöneticilerinin kod bilgisine ihtiyaç duymadan yeni kedi profilleri ve içerikler ekleyip güncelleyebildiği özel kontrol paneli.
+2. **Yönetim Paneli (admin.html):** Topluluk yöneticilerinin kod bilgisine ihtiyaç duymadan yeni kedi profilleri ve içerikler ekleyip güncelleyebildiği özel kontrol paneli.
 
-🐾 Öne Çıkan Özellikler
-Kampüs Dostları Profil Kartları:
+### 🐾 Öne Çıkan Özellikler
+* **Kampüs Dostları Profil Kartları:**
+  * Kampüste yaşayan kedilerin fotoğraflarını ve bilgilerini içeren özel tanıtım kartları.
+  * Topluluğa özel maskot ve vektörel logo tasarımları (logo-full.svg, logo-icon.svg).
 
-Kampüste yaşayan kedilerin fotoğraflarını ve bilgilerini içeren özel tanıtım kartları.
+* **Kodsuz İçerik ve Yönetim Paneli:**
+  * Cloud Firestore entegrasyonu sayesinde anlık olarak güncellenebilen profil ve duyuru yapısı.
+  * Ekip üyelerinin içerikleri kolayca yönetebilmesi için sadeleştirilmiş yönetim arayüzü.
 
-Topluluğa özel maskot ve vektörel logo tasarımları (logo-full.svg, logo-icon.svg).
+* **Güvenlik Odaklı Veritabanı Mimarisi:**
+  * Yetkisiz veri yazma/değiştirme işlemlerini engelleyen kapsamlı Firestore Güvenlik Kuralları (firestore.rules).
+  * Hızlı sorgulama için yapılandırılmış veritabanı indeksleri (firestore.indexes.json).
 
-Kodsuz İçerik ve Yönetim Paneli:
-
-Cloud Firestore entegrasyonu sayesinde anlık olarak güncellenebilen profil ve duyuru yapısı.
-
-Ekip üyelerinin içerikleri kolayca yönetebilmesi için sadeleştirilmiş yönetim arayüzü.
-
-Güvenlik Odaklı Veritabanı Mimarisi:
-
-Yetkisiz veri yazma/değiştirme işlemlerini engelleyen kapsamlı Firestore Güvenlik Kuralları (firestore.rules).
-
-Hızlı sorgulama için yapılandırılmış veritabanı indeksleri (firestore.indexes.json).
-
-🐾 Kullanılan Teknolojiler
-Saf JavaScript (ES6+): Dış framework bağımlılığı olmadan modüler arayüz mantığı ve Cloud Firestore veri yönetimi (app.js).
-
-HTML5 & CSS3: Tüm cihazlara uyumlu (responsive) tasarım ve özel bileşen stilleri (index.html, admin.html, style.css).
-
-Cloud Firestore: Dinamik içerik ve profil verileri için bulut tabanlı NoSQL veritabanı.
-
-Firestore Security Rules: Veri bütünlüğünü ve yetkilendirmeyi sağlayan özel erişim kuralları (firestore.rules).
-
-Barındırma & Dağıtım: Global CDN ve SSL desteğiyle Google Cloud Firebase Hosting.
+### 🐾 Kullanılan Teknolojiler
+* **Saf JavaScript (ES6+):** Dış framework bağımlılığı olmadan modüler arayüz mantığı ve Cloud Firestore veri yönetimi (app.js).
+* **HTML5 & CSS3:** Tüm cihazlara uyumlu (responsive) tasarım ve özel bileşen stilleri (index.html, admin.html, style.css).
+* **Cloud Firestore:** Dinamik içerik ve profil verileri için bulut tabanlı NoSQL veritabanı.
+* **Firestore Security Rules:** Veri bütünlüğünü ve yetkilendirmeyi sağlayan özel erişim kuralları (firestore.rules).
+* **Barındırma & Dağıtım:** Global CDN ve SSL desteğiyle Google Cloud Firebase Hosting.
 
 ### 🐾 Yerel Kurulum
 
@@ -117,12 +107,12 @@ cd kto-hayvan-dostlari-web
 npx serve .
 ```
 
-🐾 Canlı Bağlantılar
+### 🐾 Canlı Bağlantılar
 Web Platformu: https://ktohayvandostlari.web.app
 
 ═════════════════════════════════════════════════════════════════════════════════════════
 
-🐾 Sample Images / Örnek Görseller
+### 🐾 Sample Images / Örnek Görseller
 
 <img width="1896" height="857" alt="Ekran görüntüsü 2026-11-23 035629" src="https://github.com/user-attachments/assets/b15e7bb8-37bb-485a-ad23-41e903127009" />
 
