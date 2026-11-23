@@ -59,6 +59,9 @@ cd kto-hayvan-dostlari-web
 npx serve .
 ```
 
+🐾 Live Links
+Web Platform: https://ktohayvandostlari.web.app
+
 ═════════════════════════════════════════════════════════════════════════════════════════
 
 🇹🇷 TÜRKÇE
@@ -101,9 +104,28 @@ Firestore Security Rules: Veri bütünlüğünü ve yetkilendirmeyi sağlayan ö
 
 Barındırma & Dağıtım: Global CDN ve SSL desteğiyle Google Cloud Firebase Hosting[cite: 7].
 
+### 🐾 Yerel Kurulum
+
+```bash
+# Depoyu klonlayın
+git clone [https://github.com/ietkose/kto-hayvan-dostlari-web.git](https://github.com/ietkose/kto-hayvan-dostlari-web.git)
+
+# Proje dizinine girin
+cd kto-hayvan-dostlari-web
+
+# index.html dosyasını tarayıcınızda açın veya yerel bir sunucu başlatın
+npx serve .
+```
+
 🐾 Canlı Bağlantılar
 Web Platformu: https://ktohayvandostlari.web.app
 
 ═════════════════════════════════════════════════════════════════════════════════════════
 
-Sample Images / Örnek Görseller
+🐾 Sample Images / Örnek Görseller
+
+<img width="1896" height="857" alt="Ekran görüntüsü 2026-11-23 035629" src="https://github.com/user-attachments/assets/b15e7bb8-37bb-485a-ad23-41e903127009" />
+
+<img width="1895" height="865" alt="Ekran görüntüsü 2026-11-23 035726" src="https://github.com/user-attachments/assets/d36c9e78-b754-487e-a350-3b937d547309" />
+
+<img width="1887" height="856" alt="Ekran görüntüsü 2026-11-23 035816" src="https://github.com/user-attachments/assets/448061ae-8f3f-44e3-b187-aa11557f1665" />
